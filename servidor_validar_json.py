@@ -1,3 +1,5 @@
+from requests import get
+
 def validar_json(dados):
     # Verificar se os campos obrigatórios do JSON constam e são válidos.
 
@@ -12,7 +14,26 @@ def validar_json(dados):
             # Em caso contrário, retornar 400.
             resposta = {"Erro": "Campo 'medida' deve ser string."}
             return resposta, 400
-
+        
+    
+    #Verificar se a chave 'marcadores' consta no JSON
+    
+    if "marcadores" not in dados:
+        resposta = {"Erro": "Campo 'marcadores' inexistente."}
+        return resposta,400
+    else:
+        for item in dados["marcadores"]:
+            for chave, valor in item.itens():
+                if chave.lower() == "url":
+                    url_de_teste = valor
+                    
+        if url_de_teste:
+            req = get(url_de_teste)
+            if req.status_code >= 200 and req.status_code <= 399:
+                resposta = {"Sucesso": "URL válida"}
+                return resposta, 200
+        
+    
     # Verificar se a chave 'valores' consta no JSON.
     if "valores" not in dados:
         # Em caso contrário, retornar 400.
